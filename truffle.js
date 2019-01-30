@@ -24,6 +24,8 @@
 // const fs = require('fs');
 // const mnemonic = fs.readFileSync(".secret").toString().trim();
 
+const TestRPC = require('ganache-cli');
+
 module.exports = {
   /**
    * Networks define how you connect to your ethereum client and let you set the
@@ -42,12 +44,18 @@ module.exports = {
     // tab if you use this network and you must also set the `host`, `port` and `network_id`
     // options below to some value.
     //
-    // development: {
-    //  host: "127.0.0.1",     // Localhost (default: none)
-    //  port: 8545,            // Standard Ethereum port (default: none)
-    //  network_id: "*",       // Any network (default: none)
-    // },
-
+    development: {
+      provider: TestRPC.provider(),
+      port: 8242,
+      network_id: '*', // Match any network id
+    },
+    ganache: {
+      host: "127.0.0.1",
+      port: 7545,
+      network_id: "*",
+      gasPrice: 0,
+      mnemonic: "hole early maid topple charge advice stone warfare ensure math scheme angle"
+    },
     // Another network with more advanced options...
     // advanced: {
       // port: 8777,             // Custom port

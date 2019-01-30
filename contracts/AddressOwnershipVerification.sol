@@ -1,6 +1,6 @@
 pragma solidity >=0.4.21 <0.6.0;
 
-import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
+import 'openzeppelin-solidity/contracts/ownership/Ownable.sol';
 
 contract AddressOwnershipVerification is Ownable {
 
@@ -10,6 +10,8 @@ contract AddressOwnershipVerification is Ownable {
     // contain all verification's state
     mapping(address => mapping(address => string)) _otpcodes; // transactor address => (transactee address => otp code)
     mapping(address => mapping(address => string)) _verifications; // transactor address => (transactee address => otp code)
+
+    event NewOwnershipVerification(address indexed transactor, address indexed transactee, string otpCode);
 
     modifier isTransactor() {
         require(_transactors[msg.sender], "Only transactor can call this function");
@@ -31,8 +33,12 @@ contract AddressOwnershipVerification is Ownable {
 
     // Request to verify owner of an address as transactor
     function request(address transactee, string memory otpCode) public isTransactor {
+        if (transactee == msg.sender) {
+            revert("Transactor can't verify for themself.");
+        }
         _otpcodes[msg.sender][transactee] = otpCode;
         _transactees[transactee] = true;
+        emit NewOwnershipVerification(msg.sender, transactee, otpCode);
     }
 
     function validateYourself(address transactor, string memory otpCode) public isTransactee {
